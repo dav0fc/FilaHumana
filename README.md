@@ -10,6 +10,46 @@ Aplicativo mobile em React Native (Expo) que ajuda cidadãos — especialmente i
 - David Gabriel Gomes Fernandes — RM 556020
 - Vinicius Augusto Neves Prestes — RM 559097
 
+## Ficha CitizenTech
+
+**Nome da CitizenTech:** Fila Humana
+
+**Cidade e bairro:** São Paulo — SP (capital) · bairro: [preencher: local observado pelo grupo]
+
+**Cidadão beneficiado:** pessoas idosas e trabalhadores com pouco tempo livre que precisam ir a locais de atendimento público (UBS e Poupatempo) e não sabem quanto vão esperar.
+
+**Problema, em uma frase:** o cidadão perde horas em filas de UBS/Poupatempo sem saber quanto tempo vai esperar nem qual é o melhor horário para ir — e quem tem menos tempo e mobilidade é o mais penalizado.
+
+**Como funciona:** um sensor de contagem em cada local (ESP32) envia a ocupação da fila para uma API (C#/.NET), que guarda as leituras e calcula médias por horário; um modelo de ML responde "qual o melhor horário para ir"; o app mobile mostra ao cidadão a lista de locais com a fila atual, a estimativa de espera e o melhor horário, com favoritos e o aviso "me avise quando estiver tranquilo". Tudo é hospedado e monitorado em servidor Linux, com proteção de dados e testes documentados.
+
+**O que cada parte faz:**
+
+| Parte | O que faz |
+|---|---|
+| Physical Computing (ESP32 + Wokwi) | Conta pessoas na fila com sensor PIR/ultrassônico, mostra a lotação em LED/display e envia a contagem por Wi-Fi para a API |
+| C# Software Development + SOA | API em .NET (mesma base nas duas disciplinas): entidades Local/Leitura de Fila/Usuário, EF Core + LINQ (média de lotação por horário), async/await, Swagger, testes unitários e automatizados |
+| Inteligência Artificial & ML | Responde "qual o melhor horário para ir ao serviço X" (Random Forest/XGBoost) com dados reais e públicos (SP156, Bdpoupafila, INMET, IBGE) |
+| Mobile (este repositório) | App Expo/React Native: jornada do cidadão — lista de locais, fila atual, melhor horário, favoritos, alertas, banco local SQLite, acessibilidade |
+| Operating Systems (Linux) | Provisiona a VM, sobe a API/app e monitora CPU/disco/memória com alertas (serviço systemd tolerante a falhas) |
+| Cybersecurity | Mapeia PII (CPF, dados de saúde), impede vazamento em logs/respostas (taint analysis) e gera o indicador "Risco Cidadão" |
+| Testing, Compliance & QA (Azure Boards) | Features com critérios de aceite e test cases positivos/negativos (ex.: sensor sem leitura, local inexistente, horário sem dados) |
+
+**Link do repositório:** https://github.com/dav0fc/FilaHumana (aplicativo mobile)
+
+**Indicador de impacto:**
+
+- Tempo médio de espera na fila por visita (minutos), comparando quem usa o app (vai no horário sugerido) contra a média atual do local.
+- Proporção de visitas que ocorrem no horário recomendado (deslocamento de demanda do pico para o vale).
+- Taxa de uso do aviso: percentual de usuários que criou alerta e foi informado antes de sair de casa.
+
+**ODS conectados:**
+
+| ODS | Como a Fila Humana contribui |
+|---|---|
+| **ODS 3 — Saúde e bem-estar** | Acesso mais simples e rápido aos serviços de saúde (UBS): reduzir horas perdidas em fila aumenta a procura por atendimento preventivo e o uso adequado dos serviços. |
+| **ODS 10 — Redução das desigualdades** | Igualdade de acesso a serviços públicos: quem tem menos tempo, mobilidade ou informação deixa de ser penalizado; a acessibilidade do app (fonte grande, alto contraste, linguagem simples) inclui idosos e pessoas com baixa letragem digital. |
+| **ODS 11 — Cidades e comunidades sustentáveis** | Serviços públicos urbanos mais eficientes e centrados no cidadão: dados de fluxo ajudam a planejar horários, reduzir aglomeração e deslocamentos desnecessários. |
+
 ## Problema e público-alvo
 
 Fila presencial significa tempo perdido: chegar cedo, esperar desconhecido, voltar depois. O app responde, em linguagem simples, às três perguntas que importam para quem vai a um atendimento:
