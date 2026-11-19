@@ -4,9 +4,11 @@ Aplicativo mobile em React Native (Expo) que ajuda cidadãos — especialmente i
 
 ## Integrantes
 
-- [Preencher: nome — RM]
-- [Preencher: nome — RM]
-- [Preencher: nome — RM]
+- Denise Senise — RM 556006
+- Larissa Rodrigues Lapa — RM 554517
+- Mateus Leme — RM 557803
+- David Gabriel Gomes Fernandes — RM 556020
+- Vinicius Augusto Neves Prestes — RM 559097
 
 ## Problema e público-alvo
 
