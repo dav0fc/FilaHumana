@@ -142,9 +142,12 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.text,
   },
+  // tamanhos mínimos (não fixos): o alvo de toque nunca fica menor que
+  // 48dp, mas o botão cresce com a fonte do sistema
   iconButton: {
-    width: TouchTarget,
-    height: TouchTarget,
+    minWidth: TouchTarget,
+    minHeight: TouchTarget,
+    padding: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -160,9 +163,8 @@ const styles = StyleSheet.create({
     color: '#8A5300',
   },
   bellWrap: {
-    width: TouchTarget - 8,
-    height: TouchTarget - 8,
-    borderRadius: (TouchTarget - 8) / 2,
+    padding: 5,
+    borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -192,7 +194,8 @@ const styles = StyleSheet.create({
   statusRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.three,
+    flexWrap: 'wrap',
+    gap: Spacing.two,
     marginTop: Spacing.three,
   },
   wait: {

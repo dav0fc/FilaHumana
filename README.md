@@ -171,7 +171,7 @@ Decisões implementadas (acessibilidade é um dos critérios da avaliação, nã
 
 - **Nunca só cor**: cada estado de fila tem glifo **e** texto ("✓ Tranquila", "~ Moderada", "✕ Cheia", "? Sem informação"); as cores de fundo reforçam.
 - **Áreas de toque grandes** (mínimo 48 dp) em todo controle: cards, estrela de favorito, botões de alerta, seletor de ordenação.
-- **Fontes confortáveis** (13–26 dp) que acompanham o tamanho de fonte do sistema (via `PixelRatio.getFontScale()`, limitado a 2× para o layout não estourar).
+- **Fontes confortáveis** (13–26 dp) que acompanham o ajuste de fonte do sistema: o React Native escala o texto automaticamente e os layouts foram feitos para aguentar — quebra de linha nos blocos de status e ordenação, botões com tamanho **mínimo** (48 dp) que crescem com a fonte, nada de altura fixa que corte o texto.
 - **`accessibilityLabel`/`accessibilityHint`/`accessibilityRole`** em todos os controles: o leitor de tela anuncia "UBS Central, Posto de saúde, fila Tranquila, toque para ver detalhes" e não "card".
 - **Linguagem de cidadão**, sem termos técnicos: "Espera estimada: cerca de 15 min", "Atualizado há 2 min", "Sem estimativa de espera" — nunca "latência", "telemetria" ou número cru.
 - **Feedback claro** após ações: a estrela muda de ☆ para ★, o botão de alerta vira "✓ Aviso criado — cancelar aviso", a lista de alertas/favoritos atualiza na hora.

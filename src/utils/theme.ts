@@ -1,5 +1,3 @@
-import { PixelRatio } from 'react-native';
-
 /**
  * Paleta única (modo claro): contrastes escolhidos para leitura por
  * pessoas idosas. O app roda em modo claro de propósito (ver README).
@@ -19,17 +17,18 @@ export const Colors = {
 } as const;
 
 /**
- * Respeita o tamanho de fonte do sistema, limitado a 2x para o layout
- * não estourar em acessibilidade máxima.
+ * Tamanhos BASE em dp. O React Native já escala o texto automaticamente
+ * com o ajuste de fonte do sistema (acessibilidade) — não multiplicar
+ * aqui, porque resultaria em escala dupla e layout estourado. Os
+ * layouts aguentam fontes grandes com quebra de linha e tamanhos
+ * mínimos (ver components).
  */
-const fontScale = Math.min(PixelRatio.getFontScale(), 2);
-
 export const Fonts = {
-  small: Math.round(13 * fontScale),
-  body: Math.round(15 * fontScale),
-  emphasis: Math.round(17 * fontScale),
-  title: Math.round(21 * fontScale),
-  largeTitle: Math.round(26 * fontScale),
+  small: 13,
+  body: 15,
+  emphasis: 17,
+  title: 21,
+  largeTitle: 26,
 } as const;
 
 export const Spacing = {

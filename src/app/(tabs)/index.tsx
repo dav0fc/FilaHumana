@@ -208,10 +208,12 @@ const styles = StyleSheet.create({
   },
   sortRow: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: Spacing.two,
     marginBottom: Spacing.two,
   },
   sortOption: {
+    flex: 1,
     minHeight: TouchTarget,
     borderRadius: 12,
     borderWidth: 1.5,
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: Spacing.four,
+    paddingHorizontal: Spacing.three,
   },
   sortOptionSelected: {
     backgroundColor: Colors.primarySoft,
