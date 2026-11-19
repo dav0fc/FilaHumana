@@ -1,8 +1,15 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { PixelRatio, StyleSheet, Text, View } from 'react-native';
 import { HourlyStat } from '@/types/location';
-import { Colors, Fonts, Spacing } from '@/utils/theme';
+import { Colors, Spacing } from '@/utils/theme';
 
-const BAR_AREA_HEIGHT = 96;
+/**
+ * A altura do gráfico acompanha a fonte do sistema (limitada a 2x) para
+ * manter proporção com o texto; os rótulos do eixo NÃO acompanham
+ * (allowFontScaling=false) — assim não há sobreposição em nenhuma
+ * fonte, do mínimo ao máximo de acessibilidade.
+ */
+const fontScale = Math.min(PixelRatio.getFontScale(), 2);
+const BAR_AREA_HEIGHT = Math.round(96 * fontScale);
 
 function barColor(ratio: number): string {
   if (ratio < 0.4) return '#3E9B4F';
@@ -17,7 +24,11 @@ function barColor(ratio: number): string {
 export function HourlyBars({ stats }: { stats: HourlyStat[] }) {
   const max = Math.max(...stats.map((stat) => stat.avgWaitMinutes), 1);
   return (
-    <View style={styles.wrap} accessibilityRole="group" accessibilityLabel="Espera média por horário, em barras">
+    <View
+      style={styles.wrap}
+      accessibilityRole="group"
+      accessibilityLabel="Espera média por horário, em barras"
+    >
       <View style={styles.bars}>
         {stats.map((stat) => (
           <View key={stat.hour} style={styles.column}>
@@ -32,7 +43,9 @@ export function HourlyBars({ stats }: { stats: HourlyStat[] }) {
                 ]}
               />
             </View>
-            <Text style={styles.hourLabel}>{stat.hour % 3 === 1 ? `${stat.hour}h` : ' '}</Text>
+            <Text style={styles.hourLabel} allowFontScaling={false} numberOfLines={1}>
+              {stat.hour % 3 === 1 ? `${stat.hour}h` : ' '}
+            </Text>
           </View>
         ))}
       </View>
@@ -51,6 +64,7 @@ const styles = StyleSheet.create({
   },
   column: {
     flex: 1,
+    minWidth: 14,
     alignItems: 'center',
   },
   barArea: {
@@ -65,7 +79,7 @@ const styles = StyleSheet.create({
   },
   hourLabel: {
     marginTop: Spacing.one,
-    fontSize: Fonts.small,
+    fontSize: 12,
     color: Colors.textSecondary,
     textAlign: 'center',
   },
