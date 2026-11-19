@@ -1,56 +1,193 @@
-# Welcome to your Expo app 👋
+# Fila Humana
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Aplicativo mobile em React Native (Expo) que ajuda cidadãos — especialmente idosos e pessoas com pouco tempo — a decidir **onde e quando ir** a locais de atendimento (UBS, Poupatempo), mostrando a situação atual da fila, a estimativa de espera, o histórico por horário e avisos quando a fila ficar tranquila.
 
-## Get started
+## Integrantes
 
-1. Install dependencies
+- [Preencher: nome — RM]
+- [Preencher: nome — RM]
+- [Preencher: nome — RM]
 
-   ```bash
-   npm install
-   ```
+## Problema e público-alvo
 
-2. Start the app
+Fila presencial significa tempo perdido: chegar cedo, esperar desconhecido, voltar depois. O app responde, em linguagem simples, às três perguntas que importam para quem vai a um atendimento:
 
-   ```bash
-   npx expo start
-   ```
+1. **Onde** a fila está mais curta agora?
+2. **Quanto tempo** devo esperar?
+3. **Quando** costuma ser o melhor horário para ir?
 
-In the output, you'll find options to open the app in a
+O público-alvo não é especialista em tecnologia: por isso a interface usa poucos elementos por tela, textos grandes, estados sempre em palavra ("Tranquila", "Moderada", "Cheia") e ações grandes de tocar.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## Jornada principal do cidadão
 
-You can start developing by editing the files inside the **src/app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+1. Abrir o app e ver a lista de locais de atendimento com a situação da fila de cada um (os mais tranquilos podem vir primeiro, com um toque no seletor de ordenação).
+2. Ver o "Atualizado há X min" de cada local para saber se a informação é fresca.
+3. Abrir um local para ver o detalhe: situação atual, pessoas na fila, estimativa de espera e o **melhor horário** sugerido pela média por hora.
+4. Guardar o local nos **favoritos** (estrela) para consultar com facilidade.
+5. Criar um **alerta**: "avisar-me quando a fila estiver tranquila". Quando o app recebe uma atualização em que a fila está tranquila, chega uma notificação no aparelho e o alerta é concluído.
+6. Ver e **cancelar** alertas na aba Alertas.
 
-## Get a fresh project
+## Funcionalidades implementadas
 
-When you're ready, run:
+- Lista de locais com situação da fila, estimativa de espera e horário da última atualização
+- Ordenação "Mais tranquilos" / "Nome A–Z" (preferência persistida no banco)
+- Detalhe do local: situação, pessoas na fila, estimativa, histórico por horário e melhor horário sugerido
+- Favoritos com persistência (fechar e reabrir o app mantém)
+- Alertas "avisar quando estiver tranquila": criar, listar, cancelar, persistência, disparo por notificação local
+- Botão "Atualizar" que força nova leitura dos dados
+- Estados de tela em todo lugar: carregando, erro com "tentar novamente", vazio com explicação
+- Dados identificados como **simulados** na interface (faixa "Dados de demonstração" em todas as listas)
 
-```bash
-npm run reset-project
+## Tecnologias
+
+| Tecnologia | Versão | Uso |
+|---|---|---|
+| React Native | 0.88.1 | framework |
+| **Expo** | SDK 58 | plataforma (rota no Expo Go ou dev build) |
+| React | 19.3.0 | UI |
+| TypeScript | 6.0 | tipagem forte, sem `any` |
+| Expo Router | 58 | navegação (abas Início/Favoritos/Alertas + pilha de detalhe) |
+| **expo-sqlite** | 58 | banco de dados local (favoritos, alertas, preferências) |
+| **expo-notifications** | 58 | notificações locais dos alertas |
+
+Sem backend, sem Firebase, sem login: a jornada do cidadão não exige identificação e o escopo do trabalho é o app mobile.
+
+## Mock: o que é simulado e onde trocar pela API real
+
+A demonstração roda **100% com mock** (`src/services/mock-queue.ts`):
+
+- 6 locais (UBS e Poupatempo), cada um com contador de pessoas, nível de fila ("Tranquila" / "Moderada" / "Cheia" / "Sem informação") e estimativa de espera.
+- A simulação muda a fila **a cada 30 segundos** (passo aleatório determinístico, com semente fixa) e avisa as telas — é por essa atualização que o botão "Atualizar" e os alertas funcionam na demo.
+- Casos de estado incluídos de propósito: **UBS Santa Rita** está com o sensor desligado (nível "Sem informação", sem contagem e sem histórico) e o **Poupatempo Centro** tem contagem mas **sem estimativa de espera**.
+- O histórico por horário (7h–19h) é gerado uma vez, determinístico, e alimenta o "melhor horário para ir".
+- A faixa **"Dados de demonstração — valores simulados"** aparece nas telas de lista para que nenhum número seja lido como medição real.
+
+**Onde trocar pela API real:** as telas falam só com a interface `QueueRepository` (`src/services/queue-repository.ts`). Quando a API da equipe de IoT/controle existir, basta criar um `api-queue.ts` implementando a mesma interface (URL-base centralizada, timeout, validação da resposta) e trocar uma linha em `getQueueRepository()`. Nenhum contrato de API foi inventado: o repositório atual expõe exatamente `getLocations`, `getLocationById`, `getAllStatuses`, `getQueueStatus`, `getHourlyHistory`, `refresh` e `subscribe`.
+
+## Estrutura do projeto
+
+```
+├── app.json                    # config Expo (router, sqlite, notifications)
+├── src/
+│   ├── app/                    # rotas do Expo Router
+│   │   ├── _layout.tsx         # pilha + motor de alertas + tema
+│   │   ├── (tabs)/
+│   │   │   ├── _layout.tsx     # abas Início / Favoritos / Alertas
+│   │   │   ├── index.tsx       # lista de locais + ordenação + Atualizar
+│   │   │   ├── favoritos.tsx   # locais favoritos
+│   │   │   └── alertas.tsx     # alertas ativos + cancelamento
+│   │   └── local/[id].tsx      # detalhe do local
+│   ├── components/             # LocationCard, QueueStatusBadge, HourlyBars,
+│   │                           # DemoBanner, estados (loading/erro/vazio/botão)
+│   ├── database/               # acesso ao SQLite (camada própria, tipada)
+│   │   ├── database.ts         # abre o banco e cria o schema
+│   │   ├── favorites.ts
+│   │   ├── alerts.ts
+│   │   └── preferences.ts
+│   ├── hooks/                  # use-queue, use-location-details, use-favorites,
+│   │                           # use-alerts (dados + loading + erro + ações)
+│   ├── services/
+│   │   ├── queue-repository.ts # interface QueueRepository + ponto de troca
+│   │   ├── mock-queue.ts       # mock determinístico (locais, simulação, histórico)
+│   │   ├── alert-engine.ts     # confere alertas a cada atualização
+│   │   └── notification-service.ts # permissão + notificação local
+│   ├── types/                  # location, queue, alert
+│   └── utils/                  # theme (cores/tamanhos), queue-level (rótulos/cores),
+│                               # queue-compare (ordenação, melhor horário)
+└── docs/screenshots/           # prints reais das telas
 ```
 
-This command will move the starter code to the **example** directory and create a blank **src/app** directory where you can start developing.
+## Banco de dados local (SQLite)
 
-### Other setup steps
+Tecnologia: **expo-sqlite** (banco real no aparelho, persiste entre execuções do app). O acesso fica isolado em `src/database/`; telas e hooks nunca escrevem SQL.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| Tabela | Colunas | O que persiste |
+|---|---|---|
+| `favorites` | `location_id` (PK) | locais favoritados (sem duplicata, PK impede) |
+| `alerts` | `id` (PK), `location_id`, `condition`, `created_at` | alertas ativos (um por local; recriar substitui) |
+| `preferences` | `key` (PK), `value` | preferência de ordenação da lista |
 
-## Learn more
+O schema é criado com `CREATE TABLE IF NOT EXISTS` na primeira abertura do banco, o que deixa a inicialização segura em instalação limpa.
 
-To learn more about developing your project with Expo, look at the following resources:
+**Como verificar a persistência:** favoritar um local, matar o app (X / fechar) e reabrir — a estrela continua marcada. Idem para alertas.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Alertas: como funcionam e o limite deles
 
-## Join the community
+1. No detalhe do local, o toque em "Avisar-me quando a fila estiver tranquila" grava o alerta no SQLite.
+2. O **motor de alertas** (iniciado no layout raiz) confere os alertas gravados a cada atualização de fila — no mock, a cada 30 s e ao abrir o app.
+3. Quando a fila do local atinge o estado configurado, o app dispara uma **notificação local** no próprio aparelho (expo-notifications) e remove o alerta (ele dispara uma vez).
+4. Na aba Alertas dá para ver os alertas ativos, quando foram criados e **cancelá-los**.
 
-Join our community of developers creating universal apps.
+**Limitação (importante e honesta):** não há servidor por trás desta demonstração. A conferência de condição só acontece com o app aberto — se a fila ficar tranquila enquanto o app está fechado, o aviso não chega. A tela de Alertas e o botão de alerta deixam isso explícito para o usuário. Com a API real em tempo real, o mesmo motor passa a ser alimentado pela assinatura da API, sem mudar telas.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Acessibilidade
+
+Decisões implementadas (acessibilidade é um dos critérios da avaliação, não acabamento):
+
+- **Nunca só cor**: cada estado de fila tem glifo **e** texto ("✓ Tranquila", "~ Moderada", "✕ Cheia", "? Sem informação"); as cores de fundo reforçam.
+- **Áreas de toque grandes** (mínimo 48 dp) em todo controle: cards, estrela de favorito, botões de alerta, seletor de ordenação.
+- **Fontes confortáveis** (13–26 dp) que acompanham o tamanho de fonte do sistema (via `PixelRatio.getFontScale()`, limitado a 2× para o layout não estourar).
+- **`accessibilityLabel`/`accessibilityHint`/`accessibilityRole`** em todos os controles: o leitor de tela anuncia "UBS Central, Posto de saúde, fila Tranquila, toque para ver detalhes" e não "card".
+- **Linguagem de cidadão**, sem termos técnicos: "Espera estimada: cerca de 15 min", "Atualizado há 2 min", "Sem estimativa de espera" — nunca "latência", "telemetria" ou número cru.
+- **Feedback claro** após ações: a estrela muda de ☆ para ★, o botão de alerta vira "✓ Aviso criado — cancelar aviso", a lista de alertas/favoritos atualiza na hora.
+- **Diferença explícita entre o que se mede e o que se sabe**: "0 pessoas" nunca aparece para dado desconhecido; desconhecido vira o estado "Sem informação".
+- App em **modo claro** fixo: paleta única com contraste alto (texto `#1A1D23` sobre `#F4F5F7`), evita o custo de manter dois temas e garante o contraste na demo.
+
+## Instalação e execução
+
+Pré-requisitos: Node 20+ (ou 22+) e, para rodar no celular, o **Expo Go** (Android) ou a dev build (`npx expo run:ios`).
+
+```bash
+npm install
+npx expo start
+```
+
+- **Android/Expo Go:** escaneie o QR code ou toque no link. Notificações locais funcionam no Expo Go.
+- **iOS:** `npx expo run:ios` (dev build) ou Expo Go.
+
+Verificações:
+
+```bash
+npx tsc --noEmit   # typecheck (strict, sem any)
+npx expo lint      # eslint
+```
+
+## Testes e verificações executadas
+
+- `npx tsc --noEmit` → sem erros.
+- `npx expo lint` → sem erros nem warnings.
+- Jornada testada no **emulador Android (Expo Go 58)**: lista com estados Tranquila/Moderada/Cheia/Sem informação, detalhe com histórico e melhor horário, favoritar, criar/cancelar alerta, ordenação e "Atualizar". *(Completar aqui os itens validados no aparelho físico, se houver.)*
+- Persistência: favoritar e criar alerta → matar o app → reabrir → dados mantidos (SQLite). *(Confirmar no aparelho ao tirar os prints.)*
+
+## Limitações conhecidas e integrações pendentes
+
+- **Dados 100% simulados**: o mock é determinístico e identificado na interface; a troca para a API real é o ponto único em `getQueueRepository()`.
+- **Alertas só com o app aberto**: sem backend não há verificação em segundo plano (documentado na tela e aqui).
+- **Sem histórico real de dias**: o "melhor horário" usa média simulada por hora, claramente rotulada como simulada.
+- **Sem autenticação/administração**: de propósito — a jornada do cidadão não pede login e funções de gestão de sensores/locais ficam fora do escopo mobile.
+- **Sem modo escuro** (decisão de contraste, ver Acessibilidade).
+
+## Telas
+
+| Tela | O que tem |
+|---|---|
+| Início | lista de locais com situação da fila, estimativa, "atualizado há X", ordenação, "Atualizar", favoritos por estrela |
+| Detalhe do local | situação grande, pessoas na fila, estimativa, histórico por horário (barras), melhor horário sugerido, favoritar, criar/cancelar alerta |
+| Favoritos | locais guardados (mesmos cards da lista), vazio com ação |
+| Alertas | alertas ativos com local e condição, cancelamento, explicação do limite do aviso |
+
+### Prints
+
+*(Salvar os prints em `docs/screenshots/` com os nomes abaixo.)*
+
+| **Início — lista de locais** | **Início — estados da fila** |
+|:---:|:---:|
+| <img src="docs/screenshots/01-inicio.png" width="250" alt="Tela inicial com a lista de locais" /> | <img src="docs/screenshots/02-inicio-rolagem.png" width="250" alt="Lista rolada mostrando fila cheia e sem informação" /> |
+
+| **Detalhe do local** | **Favoritos** |
+|:---:|:---:|
+| <img src="docs/screenshots/03-detalhe.png" width="250" alt="Detalhe do local com histórico e melhor horário" /> | <img src="docs/screenshots/04-favoritos.png" width="250" alt="Tela de favoritos" /> |
+
+| **Alertas** | **Notificação do alerta (evidência)** |
+|:---:|:---:|
+| <img src="docs/screenshots/05-alertas.png" width="250" alt="Tela de alertas ativos" /> | <img src="docs/screenshots/06-notificacao.png" width="250" alt="Notificação local de fila tranquila no aparelho" /> |
