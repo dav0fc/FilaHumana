@@ -114,7 +114,8 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   starActive: {
-    color: '#B7791F',
+    // âmbar escurecido: 6.3:1 sobre o card (AA para qualquer tamanho)
+    color: '#8A5300',
   },
   categoryChip: {
     marginTop: Spacing.two,

@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   favoriteStarActive: {
-    color: '#B7791F',
+    color: '#8A5300',
   },
   meta: {
     marginTop: -Spacing.three,

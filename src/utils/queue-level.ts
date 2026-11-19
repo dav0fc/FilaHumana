@@ -27,14 +27,19 @@ export const LEVEL_ORDER: Record<QueueLevel, number> = {
   unknown: 3,
 };
 
+/**
+ * Fundos em gradiente de luminosidade (tranquila mais claro, cheia mais
+ * escuro): para daltonismo, o estado continua legível sem depender do matiz.
+ * Todos os pares têm contraste WCAG AA+ (6:1 ou mais).
+ */
 export function levelColors(level: QueueLevel): { background: string; text: string } {
   switch (level) {
     case 'low':
-      return { background: '#DFF2E4', text: '#14532D' };
+      return { background: '#E7F5EA', text: '#14532D' };
     case 'moderate':
-      return { background: '#FBF0D8', text: '#7A4E04' };
+      return { background: '#FAECCB', text: '#7A4E04' };
     case 'high':
-      return { background: '#FBE5E2', text: '#8A1F18' };
+      return { background: '#F7D9D3', text: '#8A1F18' };
     case 'unknown':
       return { background: '#ECEEF1', text: '#454C57' };
   }
