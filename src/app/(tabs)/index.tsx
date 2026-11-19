@@ -3,9 +3,11 @@ import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from '
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { DemoBanner } from '@/components/demo-banner';
 import { LocationCard } from '@/components/location-card';
+import { LocationDetails } from '@/components/location-details';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
-import { useFavorites } from '@/store/favorites-store';
 import { useQueue } from '@/hooks/use-queue';
+import { useAlerts } from '@/store/alerts-store';
+import { useFavorites } from '@/store/favorites-store';
 import { PREFERENCE_SORT_MODE, getPreference, setPreference } from '@/database/preferences';
 import { compareCalmest } from '@/utils/queue-compare';
 import { Colors, Fonts, Spacing, TouchTarget } from '@/utils/theme';
@@ -20,7 +22,10 @@ const SORT_OPTIONS: { value: SortMode; label: string }[] = [
 export default function HomeScreen() {
   const { entries, loading, refreshing, error, refresh } = useQueue();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const { alerts, createAlert, cancel } = useAlerts();
   const [sortMode, setSortMode] = useState<SortMode>('calmest');
+  // Um card expandido por vez: a lista é a tela de informações.
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   useEffect(() => {
     getPreference(PREFERENCE_SORT_MODE)
@@ -45,6 +50,22 @@ export default function HomeScreen() {
     return list;
   }, [entries, sortMode]);
 
+  const toggleExpand = useCallback((locationId: string) => {
+    setExpandedId((current) => (current === locationId ? null : locationId));
+  }, []);
+
+  const toggleAlert = useCallback(
+    async (locationId: string) => {
+      const existing = alerts.find((alert) => alert.locationId === locationId);
+      if (existing) {
+        await cancel(existing.id);
+      } else {
+        await createAlert(locationId);
+      }
+    },
+    [alerts, cancel, createAlert]
+  );
+
   if (loading && entries.length === 0) {
     return (
       <SafeAreaView style={styles.safe}>
@@ -67,7 +88,12 @@ export default function HomeScreen() {
             <LocationCard
               entry={item}
               isFavorite={isFavorite(item.id)}
-              onToggleFavorite={toggleFavorite}
+              hasAlert={alerts.some((alert) => alert.locationId === item.id)}
+              expanded={expandedId === item.id}
+              onToggleExpand={() => toggleExpand(item.id)}
+              onToggleFavorite={() => void toggleFavorite(item.id)}
+              onToggleAlert={() => void toggleAlert(item.id)}
+              expandedContent={<LocationDetails entry={item} />}
             />
           )}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -96,8 +122,8 @@ export default function HomeScreen() {
               </View>
               <Text style={styles.listHint}>
                 {sortMode === 'calmest'
-                  ? 'Os locais com fila mais curta aparecem primeiro.'
-                  : 'Locais em ordem alfabética.'}
+                  ? 'Os locais com fila mais curta aparecem primeiro. Toque em um local para abrir os detalhes.'
+                  : 'Locais em ordem alfabética. Toque em um local para abrir os detalhes.'}
               </Text>
             </>
           }

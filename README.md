@@ -64,16 +64,17 @@ O público-alvo não é especialista em tecnologia: por isso a interface usa pou
 
 1. Abrir o app e ver a lista de locais de atendimento com a situação da fila de cada um (os mais tranquilos podem vir primeiro, com um toque no seletor de ordenação).
 2. Ver o "Atualizado há X min" de cada local para saber se a informação é fresca.
-3. Abrir um local para ver o detalhe: situação atual, pessoas na fila, estimativa de espera e o **melhor horário** sugerido pela média por hora.
+3. Tocar no card do local para **expandir os detalhes no lugar**: descrição, espera média por horário (barras) e o **melhor horário** sugerido.
 4. Guardar o local nos **favoritos** (estrela) para consultar com facilidade.
-5. Criar um **alerta**: "avisar-me quando a fila estiver tranquila". Quando o app recebe uma atualização em que a fila está tranquila, chega uma notificação no aparelho e o alerta é concluído.
+5. Criar um **alerta** tocando no **sino** do card (estado visível, estilo YouTube: mudo e esmaecido desligado, cheio e destacado quando ativo). Quando o app recebe uma atualização em que a fila está tranquila, chega uma notificação no aparelho e o alerta é concluído.
 6. Ver e **cancelar** alertas na aba Alertas.
 
 ## Funcionalidades implementadas
 
 - Lista de locais com situação da fila, estimativa de espera e horário da última atualização
 - Ordenação "Mais tranquilos" / "Nome A–Z" (preferência persistida no banco)
-- Detalhe do local: situação, pessoas na fila, estimativa, histórico por horário e melhor horário sugerido
+- Card expandível no lugar: descrição, histórico por horário (barras) e melhor horário sugerido, sem trocar de tela
+- Sino de alerta em cada card, com estado visível (ativo/desligado)
 - Favoritos com persistência (fechar e reabrir o app mantém)
 - Alertas "avisar quando estiver tranquila": criar, listar, cancelar, persistência, disparo por notificação local
 - Botão "Atualizar" que força nova leitura dos dados
@@ -118,16 +119,18 @@ A demonstração roda **100% com mock** (`src/services/mock-queue.ts`):
 │   │   │   ├── index.tsx       # lista de locais + ordenação + Atualizar
 │   │   │   ├── favoritos.tsx   # locais favoritos
 │   │   │   └── alertas.tsx     # alertas ativos + cancelamento
-│   │   └── local/[id].tsx      # detalhe do local
-│   ├── components/             # LocationCard, QueueStatusBadge, HourlyBars,
-│   │                           # DemoBanner, estados (loading/erro/vazio/botão)
+│   ├── components/             # LocationCard (expande no lugar), LocationDetails,
+│   │                           # QueueStatusBadge, HourlyBars, DemoBanner,
+│   │                           # estados (loading/erro/vazio/botão)
 │   ├── database/               # acesso ao SQLite (camada própria, tipada)
 │   │   ├── database.ts         # abre o banco e cria o schema
 │   │   ├── favorites.ts
 │   │   ├── alerts.ts
 │   │   └── preferences.ts
-│   ├── hooks/                  # use-queue, use-location-details, use-favorites,
-│   │                           # use-alerts (dados + loading + erro + ações)
+│   ├── hooks/                  # use-queue (locais + situação ao vivo)
+│   ├── store/                  # stores compartilhadas (useSyncExternalStore):
+│   │                           # favorites-store, alerts-store — favoritar ou criar
+│   │                           # alerta em qualquer tela atualiza todas na hora
 │   ├── services/
 │   │   ├── queue-repository.ts # interface QueueRepository + ponto de troca
 │   │   ├── mock-queue.ts       # mock determinístico (locais, simulação, histórico)
@@ -155,7 +158,7 @@ O schema é criado com `CREATE TABLE IF NOT EXISTS` na primeira abertura do banc
 
 ## Alertas: como funcionam e o limite deles
 
-1. No detalhe do local, o toque em "Avisar-me quando a fila estiver tranquila" grava o alerta no SQLite.
+1. No card do local, o toque no **sino** grava o alerta no SQLite e o sino muda para o estado ativo (cheio e destacado).
 2. O **motor de alertas** (iniciado no layout raiz) confere os alertas gravados a cada atualização de fila — no mock, a cada 30 s e ao abrir o app.
 3. Quando a fila do local atinge o estado configurado, o app dispara uma **notificação local** no próprio aparelho (expo-notifications) e remove o alerta (ele dispara uma vez).
 4. Na aba Alertas dá para ver os alertas ativos, quando foram criados e **cancelá-los**.
@@ -213,9 +216,9 @@ npx expo lint      # eslint
 
 | Tela | O que tem |
 |---|---|
-| Início | lista de locais com situação da fila, estimativa, "atualizado há X", ordenação, "Atualizar", favoritos por estrela |
-| Detalhe do local | situação grande, pessoas na fila, estimativa, histórico por horário (barras), melhor horário sugerido, favoritar, criar/cancelar alerta |
-| Favoritos | locais guardados (mesmos cards da lista), vazio com ação |
+| Início | lista de locais com situação da fila, estimativa, "atualizado há X", ordenação, "Atualizar", estrela de favorito e sino de alerta em cada card |
+| Card expandido | toque no card abre no lugar: descrição, histórico por horário (barras) e melhor horário sugerido — sem trocar de tela |
+| Favoritos | locais guardados (mesmos cards expandíveis), vazio com ação |
 | Alertas | alertas ativos com local e condição, cancelamento, explicação do limite do aviso |
 
 ### Prints
@@ -228,7 +231,7 @@ npx expo lint      # eslint
 
 | **Detalhe do local** | **Favoritos** |
 |:---:|:---:|
-| <img src="docs/screenshots/03-detalhe.png" width="250" alt="Detalhe do local com histórico e melhor horário" /> | <img src="docs/screenshots/04-favoritos.png" width="250" alt="Tela de favoritos" /> |
+| <img src="docs/screenshots/03-card-expandido.png" width="250" alt="Card expandido com histórico e melhor horário" /> | <img src="docs/screenshots/04-favoritos.png" width="250" alt="Tela de favoritos" /> |
 
 | **Alertas** | **Notificação do alerta (evidência)** |
 |:---:|:---:|
