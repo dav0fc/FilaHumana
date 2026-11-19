@@ -1,4 +1,5 @@
-import { listAlerts, cancelAlert } from '@/database/alerts';
+import { listAlerts } from '@/database/alerts';
+import { cancelAlert } from '@/store/alerts-store';
 import { QueueStatus } from '@/types/queue';
 import { showLocalNotification, ensureNotificationPermission } from './notification-service';
 import { getQueueRepository } from './queue-repository';

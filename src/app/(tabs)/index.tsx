@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { DemoBanner } from '@/components/demo-banner';
 import { LocationCard } from '@/components/location-card';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
-import { useFavorites } from '@/hooks/use-favorites';
+import { useFavorites } from '@/store/favorites-store';
 import { useQueue } from '@/hooks/use-queue';
 import { PREFERENCE_SORT_MODE, getPreference, setPreference } from '@/database/preferences';
 import { compareCalmest } from '@/utils/queue-compare';

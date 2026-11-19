@@ -5,8 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { HourlyBars } from '@/components/hourly-bars';
 import { QueueStatusBadge } from '@/components/queue-status-badge';
 import { ErrorState, LoadingState } from '@/components/states';
-import { useAlerts } from '@/hooks/use-alerts';
-import { useFavorites } from '@/hooks/use-favorites';
+import { useAlerts } from '@/store/alerts-store';
+import { useFavorites } from '@/store/favorites-store';
 import { NOT_FOUND_ERROR, useLocationDetails } from '@/hooks/use-location-details';
 import {
   LEVEL_LABEL,

@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { DemoBanner } from '@/components/demo-banner';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
 import { LocationCard } from '@/components/location-card';
-import { useFavorites } from '@/hooks/use-favorites';
+import { useFavorites } from '@/store/favorites-store';
 import { useQueue } from '@/hooks/use-queue';
 import { Colors, Fonts, Spacing } from '@/utils/theme';
 

@@ -2,7 +2,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { EmptyState, ErrorState, LoadingState } from '@/components/states';
-import { useAlerts } from '@/hooks/use-alerts';
+import { useAlerts } from '@/store/alerts-store';
 import { relativeTime } from '@/utils/queue-level';
 import { Colors, Fonts, Spacing, TouchTarget } from '@/utils/theme';
 
