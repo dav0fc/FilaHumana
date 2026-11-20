@@ -14,7 +14,7 @@ Aplicativo mobile em React Native (Expo) que ajuda cidadãos — especialmente i
 
 **Nome da CitizenTech:** Fila Humana
 
-**Cidade e bairro:** São Paulo — SP (capital) · bairro: [preencher: local observado pelo grupo]
+**Cidade e bairro:** São Paulo — SP (capital) · bairro: Cidade Tiradentes
 
 **Cidadão beneficiado:** pessoas idosas e trabalhadores com pouco tempo livre que precisam ir a locais de atendimento público (UBS e Poupatempo) e não sabem quanto vão esperar.
 
@@ -216,23 +216,39 @@ npx expo lint      # eslint
 
 | Tela | O que tem |
 |---|---|
-| Início | lista de locais com situação da fila, estimativa, "atualizado há X", ordenação, "Atualizar", estrela de favorito e sino de alerta em cada card |
-| Card expandido | toque no card abre no lugar: descrição, histórico por horário (barras) e melhor horário sugerido — sem trocar de tela |
-| Favoritos | locais guardados (mesmos cards expandíveis), vazio com ação |
-| Alertas | alertas ativos com local e condição, cancelamento, explicação do limite do aviso |
+| Início | Lista de locais com situação da fila, estimativa, atualização, ordenação, favoritos e alertas |
+| Card expandido | Descrição, histórico por horário e melhor horário sugerido |
+| Favoritos | Locais guardados e estado vazio quando ainda não há favoritos |
+| Alertas | Alertas ativos, cancelamento e estado vazio quando não há alertas |
 
-### Prints
+### Prints do aplicativo
 
-*(Salvar os prints em `docs/screenshots/` com os nomes abaixo.)*
+As imagens abaixo ficam em `docs/screenshots/` no repositório.
 
-| **Início — lista de locais** | **Início — estados da fila** |
-|:---:|:---:|
-| <img src="docs/screenshots/01-inicio.png" width="250" alt="Tela inicial com a lista de locais" /> | <img src="docs/screenshots/02-inicio-rolagem.png" width="250" alt="Lista rolada mostrando fila cheia e sem informação" /> |
+#### 1. Início — lista de locais
 
-| **Detalhe do local** | **Favoritos** |
-|:---:|:---:|
-| <img src="docs/screenshots/03-card-expandido.png" width="250" alt="Card expandido com histórico e melhor horário" /> | <img src="docs/screenshots/04-favoritos.png" width="250" alt="Tela de favoritos" /> |
+![Tela inicial com a lista de locais](docs/screenshots/Inicio.jpeg)
 
-| **Alertas** | **Notificação do alerta (evidência)** |
-|:---:|:---:|
-| <img src="docs/screenshots/05-alertas.png" width="250" alt="Tela de alertas ativos" /> | <img src="docs/screenshots/06-notificacao.png" width="250" alt="Notificação local de fila tranquila no aparelho" /> |
+#### 2. Início — detalhes do local
+
+![Card expandido com histórico por horário e melhor horário sugerido](docs/screenshots/TelaInicioComDetalhes.jpeg)
+
+#### 3. Favoritos — estado vazio
+
+![Tela de favoritos sem locais salvos](docs/screenshots/TelaFavoritosSemFavoritos.jpeg)
+
+#### 4. Favoritos — local salvo
+
+![Tela de favoritos com um local salvo](docs/screenshots/TelaFavoritos.jpeg)
+
+#### 5. Alertas — estado vazio
+
+![Tela de alertas sem alertas ativos](docs/screenshots/TelaAlertaSemAlerta.jpeg)
+
+#### 6. Alertas — alertas ativos
+
+![Tela com a lista de alertas ativos](docs/screenshots/TelaAlerta.jpeg)
+
+#### 7. Notificação local
+
+![Notificação de fila tranquila recebida no aparelho](docs/screenshots/Notificação.jpeg)
