@@ -14,7 +14,7 @@ Aplicativo mobile em React Native (Expo) que ajuda cidadãos — especialmente i
 
 **Nome da CitizenTech:** Fila Humana
 
-**Cidade e bairro:** São Paulo — SP (capital) · bairro: [preencher: local observado pelo grupo]
+**Cidade e bairro:** São Paulo — SP (capital) · bairro: Cidade Tiradentes
 
 **Cidadão beneficiado:** pessoas idosas e trabalhadores com pouco tempo livre que precisam ir a locais de atendimento público (UBS e Poupatempo) e não sabem quanto vão esperar.
 
